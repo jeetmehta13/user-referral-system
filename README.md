@@ -1,24 +1,46 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This application requires the following:
 
-Things you may want to cover:
+* Ruby version: 3.0.1
+* Rails version: 7.0.2
 
-* Ruby version
+## Configuration
 
-* System dependencies
+Before setting the app, please make sure to configure the .env file. Otherwise the setup will not work. This is the data required foor .env:
 
-* Configuration
+```
+# The database details
+MYSQL_DATABASE=
+MYSQL_USERNAME=
+MYSQL_PASSWORD=
+MYSQL_HOST=
+DB_POOL=
 
-* Database creation
+# The port where the application should run
+PORT = 3000
+$ The base URL, for local development use the default values
+BASE_URL = http://localhost:$PORT
 
-* Database initialization
+# The details of the admin account
+ADMIN_FIRST_NAME=
+ADMIN_LAST_NAME=
+ADMIN_EMAIL=
+ADMIN_PASSWORD=
+```
 
-* How to run the test suite
+To setup the app: 
 
-* Services (job queues, cache servers, search engines, etc.)
+```
+  bin/setup
+```
 
-* Deployment instructions
+To run the server:
 
-* ...
+```
+  bin/dev
+```
+
+An admin user will be created automatically on setup based on the data you have provided in the .env file. Admin users can send email invites to any email-id. The emails in local dev are in the `tmp/mail` folder. The file will have the name of the invite receiver.
+
+Receiver can only sign up using the link provided in the mail.
