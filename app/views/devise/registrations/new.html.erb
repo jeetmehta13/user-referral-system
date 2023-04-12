@@ -5,7 +5,7 @@
 <% elsif @referral_key_valid == false %>
   <p>Sorry, this sign up link does not have a valid referral key. Sign ups are only possible with a valid referral. Please use a valid referral link to sign up. Check your email for one if you were invited. If there was an error please ask an admin to regenerate it.</p>
 <% else %>
-  <%= form_for(resource, as: resource_name, url: registration_path(resource_name, referral_key: @referral_key)) do |f| %>
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name, referral_key: params['referral_key'])) do |f| %>
     <p><%= render "devise/shared/error_messages", resource: resource %><p>
 
     <div class="field form-group">
@@ -20,7 +20,7 @@
 
     <div class="field form-group">
       <%= f.label :email %><br />
-      <%= f.email_field :email, autocomplete: "email", readonly: true, value: @referred_email %>
+      <%= f.email_field :email, autocomplete: "email", readonly: true, value: resource.email.nil? || resource.email.blank? ? @referred_email : resource.email%>
     </div>
 
     <div class="field form-group">

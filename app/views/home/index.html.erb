@@ -18,7 +18,21 @@
   <h2>Previous Invitations</h2>
   <ul>
     <% @previous_invitations.each do |invitation| %>
-      <li><%= invitation.referred_email %> </li>
+      <li>
+      <%= invitation.referred_email %>
+      <% if invitation.referral_used? %>
+        - Accepted
+      <% else %>
+        - Not yet accepted
+        <% if invitation.sent_count < 5 %>
+          <%= button_to '/send-referral', method: :post, params: { referral: { email: invitation.referred_email } }, disabled: invitation.sent_count >= 5 do %>
+            Resend Invite
+          <% end %>
+        <% else %>
+          - Cannot send any more invites
+        <% end %>
+      <% end %>
+    </li>
     <% end %>
   </ul>
 <% end %>

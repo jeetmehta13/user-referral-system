@@ -43,18 +43,18 @@ class Users::RegistrationsController < Devise::RegistrationsController
   protected
 
   def check_referral_param
-    @referral_key_present = true
-    @referral_key_valid = true
+    referral_key_present = true
+    referral_key_valid = true
     @referred_email = ""
     
-    @referral_key = params[:referral_key]
+    referral_key = params[:referral_key]
     
-    if @referral_key.blank?
-      @referral_key_present = false
+    if referral_key.blank?
+      referral_key_present = false
     else
-      referral = Referral.find_by(referral_key: @referral_key, referral_used: false)
+      referral = Referral.find_by(referral_key: referral_key, referral_used: false)
       if referral.nil?
-        @referral_key_valid = false
+        referral_key_valid = false
       else
         @referred_email = referral.referred_email    
       end
