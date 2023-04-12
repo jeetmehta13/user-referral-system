@@ -1,12 +1,12 @@
 <h2>Sign up</h2>
 
-<% if !@referral_key_present %>
+<% if @referral_key_present == false %>
   <p>Sorry, sign ups are only possible with a valid referral. Please use a valid referral link to sign up. Check your email for one if you were invited. If there was an error please ask an admin to regenerate it.</p>
-<% elsif !@referral_key_valid %>
+<% elsif @referral_key_valid == false %>
   <p>Sorry, this sign up link does not have a valid referral key. Sign ups are only possible with a valid referral. Please use a valid referral link to sign up. Check your email for one if you were invited. If there was an error please ask an admin to regenerate it.</p>
 <% else %>
   <%= form_for(resource, as: resource_name, url: registration_path(resource_name, referral_key: @referral_key)) do |f| %>
-    <%= render "devise/shared/error_messages", resource: resource %>
+    <p><%= render "devise/shared/error_messages", resource: resource %><p>
 
     <div class="field form-group">
       <%= f.label :first_name %><br />

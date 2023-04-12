@@ -64,10 +64,15 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def mark_referral_used
     referral_key = params["referral_key"]
     email = params["user"]["email"]
-    if User.exists?(:email => email)
-      Referral.where(referral_key: referral_key).update_all(referral_used: true)
+    user = User.find_by(email: email)
+    if !user.nil?
+      referral = Referral.find_by(referral_key: referral_key, referred_email: email)
+      referral.update(referral_used: true)
+      referrer_user = User.find_by(id: referral.referrer_id)
+      user.update(referred_by: referrer_user.email)
     end
   end
+
   # If you have extra params to permit, append them to the sanitizer.
   def configure_sign_up_params
     devise_parameter_sanitizer.permit(:sign_up, keys: [:first_name, :last_name, :referral_key])
