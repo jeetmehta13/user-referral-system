@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
+  skip_before_action :verify_authenticity_token, only: [:create]
   before_action :configure_sign_up_params, only: [:create]
-  # before_action :configure_account_update_params, only: [:update]
   before_action :check_referral_param, only: [:new]
   after_action :mark_referral_used, only: [:create]
 
@@ -12,9 +12,28 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # end
 
   # POST /resource
-  # def create
-  #   super
-  # end
+  def create
+    if params['user'].blank?
+      error = { error: 'Missing user data'}
+      return render :json => error
+    end
+    @referral_key = params['referral_key']
+    if !check_referral_exists
+      error = { error: 'Missing the referral_key query param'}
+      return render :json => error
+    end
+    if params['user']['email'].blank?
+      error = { error: 'Missing email in data'}
+      return render :json => error
+    end
+    @referred_email = params['user']['email']
+    @referral = Referral.find_by(referral_key: @referral_key, referred_email: @referred_email)
+    if @referral.nil?
+      error = { error: 'The email is not linked to the referral key, or the referral key is incorrect'}
+      return render :json => error
+    end
+    super
+  end
 
   # GET /resource/edit
   # def edit
@@ -42,35 +61,42 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   protected
 
+  def check_referral_exists
+    return !@referral_key.blank?
+  end
+
+  def check_referral_validity
+    @referral = Referral.find_by(referral_key: @referral_key, referral_used: false)
+    !@referral.nil?
+  end
+
   def check_referral_param
-    referral_key_present = true
-    referral_key_valid = true
+    @referral_key_present = true
+    @referral_key_valid = true
     @referred_email = ""
     
-    referral_key = params[:referral_key]
+    @referral_key = params[:referral_key]
     
-    if referral_key.blank?
-      referral_key_present = false
+    if !check_referral_exists
+      @referral_key_present = false
     else
-      referral = Referral.find_by(referral_key: referral_key, referral_used: false)
-      if referral.nil?
-        referral_key_valid = false
+      if check_referral_validity
+        @referred_email = @referral.referred_email    
       else
-        @referred_email = referral.referred_email    
+        @referral_key_valid = false
       end
     end
   end
 
   def mark_referral_used
-    referral_key = params["referral_key"]
-    email = params["user"]["email"]
-    user = User.find_by(email: email)
-    if !user.nil?
-      referral = Referral.find_by(referral_key: referral_key, referred_email: email)
-      referral.update(referral_used: true)
-      referrer_user = User.find_by(id: referral.referrer_id)
-      user.update(referred_by: referrer_user.email)
-    end
+    if !@referral_key.blank? and !@referred_email.blank?
+      user = User.find_by(email: @referred_email)
+      if !user.nil? and !@referral.nil?
+        @referral.update(referral_used: true)
+        referrer_user = User.find_by(id: @referral.referrer_id)
+        user.update(referred_by: referrer_user.email)
+      end
+    end 
   end
 
   # If you have extra params to permit, append them to the sanitizer.
