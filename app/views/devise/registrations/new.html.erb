@@ -1,0 +1,45 @@
+<h2>Sign up</h2>
+
+<% if !@referral_key_present %>
+  <p>Sorry, sign ups are only possible with a valid referral. Please use a valid referral link to sign up. Check your email for one if you were invited. If there was an error please ask an admin to regenerate it.</p>
+<% elsif !@referral_key_valid %>
+  <p>Sorry, this sign up link does not have a valid referral key. Sign ups are only possible with a valid referral. Please use a valid referral link to sign up. Check your email for one if you were invited. If there was an error please ask an admin to regenerate it.</p>
+<% else %>
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name, referral_key: @referral_key)) do |f| %>
+    <%= render "devise/shared/error_messages", resource: resource %>
+
+    <div class="field form-group">
+      <%= f.label :first_name %><br />
+      <%= f.text_field :first_name, autofocus: true %>
+    </div>
+
+    <div class="field form-group">
+      <%= f.label :last_name %><br />
+      <%= f.text_field :last_name %>
+    </div>
+
+    <div class="field form-group">
+      <%= f.label :email %><br />
+      <%= f.email_field :email, autocomplete: "email", readonly: true, value: @referred_email %>
+    </div>
+
+    <div class="field form-group">
+      <%= f.label :password %>
+      <% if @minimum_password_length %>
+      <em>(<%= @minimum_password_length %> characters minimum)</em>
+      <% end %><br />
+      <%= f.password_field :password, autocomplete: "new-password" %>
+    </div>
+
+    <div class="field form-group">
+      <%= f.label :password_confirmation %><br />
+      <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+    </div>
+
+    <div class="actions">
+      <%= f.submit "Sign up" %>
+    </div>
+  <% end %>
+
+  <%= render "devise/shared/links" %>
+<% end %>

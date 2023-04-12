@@ -1,7 +1,6 @@
 Rails.application.routes.draw do
-  devise_for :users
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Defines the root path route ("/")
-  root "home#index"
+  devise_for :users, controllers: {registrations: 'users/registrations'}
+  get '/referral-only', to: 'referral_only#index', as: :referral_only
+  post '/send-referral', to: 'home#send_invitation'
+  root 'home#index'
 end

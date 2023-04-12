@@ -1,2 +1,24 @@
-<h1>Home#index</h1>
-<p>Find me in app/views/home/index.html.erb</p>
+<% if @dashboard_type == "referred"%>
+  <h2>Account Details</h2>
+
+  <p><strong>First Name:</strong> <%= current_user.first_name %></p>
+  <p><strong>Last Name:</strong> <%= current_user.last_name %></p>
+  <p><strong>Email:</strong> <%= current_user.email %></p>
+  <p><strong>Referred By:</strong> <%= current_user.referred_by %></p>
+
+<% else %>  
+  <h1>Admin Dashboard</h1>
+
+  <%= form_for :referral, url: '/send-referral', method: :post do |f| %>
+    <%= f.label :email %>
+    <%= f.text_field :email %>
+    <%= f.submit "Send Referral" %>
+  <% end %>
+
+  <h2>Previous Invitations</h2>
+  <ul>
+    <% @previous_invitations.each do |invitation| %>
+      <li><%= invitation.referred_email %> </li>
+    <% end %>
+  </ul>
+<% end %>

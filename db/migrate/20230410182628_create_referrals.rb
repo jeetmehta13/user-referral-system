@@ -5,6 +5,7 @@ class CreateReferrals < ActiveRecord::Migration[7.0]
       t.string :referred_email, null: false
       t.integer :sent_count, null: false
       t.string :referral_key, null: false
+      t.boolean :referral_used, null: false, default: false      
       t.timestamps
     end
 

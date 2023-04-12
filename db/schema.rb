@@ -16,6 +16,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_10_185524) do
     t.string "referred_email", null: false
     t.integer "sent_count", null: false
     t.string "referral_key", null: false
+    t.boolean "referral_used", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["referrer_id"], name: "fk_rails_2eb0614166"
@@ -25,7 +26,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_10_185524) do
     t.string "first_name", null: false
     t.string "last_name", null: false
     t.string "referred_by"
-    t.string "type", null: false
+    t.string "user_type", default: "referred", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "email", default: "", null: false

@@ -4,7 +4,7 @@ class CreateUsers < ActiveRecord::Migration[7.0]
       t.string :first_name, null: false
       t.string :last_name, null: false
       t.string :referred_by
-      t.string :type, null: false 
+      t.string :user_type, null: false, default: "referred" 
 
       t.timestamps
     end
