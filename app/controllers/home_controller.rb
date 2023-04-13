@@ -15,9 +15,9 @@ class HomeController < ApplicationController
       email = params[:referral][:email]
 
       if User.exists?(email: email) 
-        redirect_to root_path, notice: "User already signed up!"
+        redirect_to root_path, notice: { message: "User already signed up!", type: "danger" }
       else 
-        notice = "Invitation sent!"
+        notice = { message: "Invitation sent!", type: "success" }
         referral_key = SecureRandom.hex(8)
         
         referred_previously = Referral.find_by(referrer_id: current_user.id, referred_email: email);
@@ -26,7 +26,7 @@ class HomeController < ApplicationController
           Referral.create(referrer_id: current_user.id, referred_email: email, sent_count: 1, referral_key: referral_key)
         else
           if referred_previously.sent_count >= 5
-            notice = "Maximum number of invitations sent!"
+            notice = { message: "Maximum number of invitations sent!", type: "danger" }
           else
             create_and_invite(email, referral_key)
             sent_count = referred_previously.sent_count + 1
@@ -37,7 +37,7 @@ class HomeController < ApplicationController
         redirect_to root_path, notice: notice
       end
     rescue => exception
-      redirect_to root_path, notice: "Internal error occurred, please try again. Contact us if the error persists."
+      redirect_to root_path, notice: { message: "Internal error occurred, please try again. Contact us if the error persists.", type: "danger" }
     end
   end
 
